@@ -1,3 +1,4 @@
+
 const express = require('express');
 const { middleware, Client } = require('@line/bot-sdk');
 const bodyParser = require('body-parser');
@@ -15,9 +16,10 @@ app.use(middleware(config));
 app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
-  Promise.all(req.body.events.map(handleEvent))
-    .then(result => res.json(result))
-    .catch(err => {
+  Promise
+    .all(req.body.events.map(handleEvent))
+    .then((result) => res.json(result))
+    .catch((err) => {
       console.error(err);
       res.status(500).end();
     });
@@ -30,10 +32,11 @@ function handleEvent(event) {
 
   return client.replyMessage(event.replyToken, {
     type: 'text',
-    text: 'Cảm ơn bạn đã nhắn: ' + event.message.text
+    text: `Bạn đã nói: ${event.message.text}`
   });
 }
 
-app.listen(3000, () => {
-  console.log('Server is running');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
